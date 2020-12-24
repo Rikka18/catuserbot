@@ -14,9 +14,6 @@ from PIL import Image, ImageColor
 from telethon import events
 from telethon.errors.rpcerrorlist import YouBlockedUserError
 
-from ..utils import admin_cmd, edit_or_reply, sudo_cmd
-from . import CMD_HELP
-
 
 @bot.on(admin_cmd(pattern="scan ?(.*)"))
 @bot.on(sudo_cmd(pattern="scan ?(.*)", allow_sudo=True))
@@ -67,7 +64,7 @@ async def parseqr(qr_e):
         os.makedirs(Config.TEMP_DIR)
     # For .decode command, get QR Code/BarCode content from the replied photo.
     downloaded_file_name = await qr_e.client.download_media(
-        await qr_e.get_reply_message(), Config.TMP_DIR
+        await qr_e.get_reply_message(), Config.TEMP_DIR
     )
     # parse the Official ZXing webpage to decode the QRCode
     command_to_exec = [

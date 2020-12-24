@@ -2,8 +2,6 @@ from asyncio import sleep
 
 import requests
 
-from ..utils import admin_cmd, edit_or_reply, sudo_cmd
-
 
 @bot.on(admin_cmd(pattern="lmg (.*)"))
 @bot.on(sudo_cmd(pattern="lmg (.*)", allow_sudo=True))
@@ -24,7 +22,7 @@ async def _(event):
             )
         )
     else:
-        await event.edit("Something went wrong. Please try again later.")
+        await edit_delete(event, "`Something went wrong. Please try again later.`", 5)
 
 
 @bot.on(admin_cmd(pattern="lmy (.*)"))
@@ -48,7 +46,7 @@ async def _(event):
             )
         )
     else:
-        await event.edit("Something went wrong. Please try again later.")
+        await edit_delete(event, "`Something went wrong. Please try again later.`", 5)
 
 
 @bot.on(admin_cmd(pattern="ddg (.*)"))
@@ -72,7 +70,7 @@ async def _(event):
             )
         )
     else:
-        await event.edit("Something went wrong. Please try again later.")
+        await edit_delete(event, "`Something went wrong. Please try again later.`", 5)
 
 
 @bot.on(admin_cmd(pattern="lmalt (.*)"))
@@ -94,7 +92,7 @@ async def _(event):
             )
         )
     else:
-        await event.edit("Something went wrong. Please try again later.")
+        await edit_delete(event, "`Something went wrong. Please try again later.`", 5)
 
 
 @bot.on(admin_cmd(pattern="lmvar (.*)"))
@@ -118,7 +116,7 @@ async def _(event):
             )
         )
     else:
-        await event.edit("Something went wrong. Please try again later.")
+        await edit_delete(event, "`Something went wrong. Please try again later.`", 5)
 
 
 @bot.on(admin_cmd(pattern="lmlog (.*)"))
@@ -140,7 +138,7 @@ async def _(event):
             )
         )
     else:
-        await event.edit("Something went wrong. Please try again later.")
+        await edit_delete(event, "`Something went wrong. Please try again later.`", 5)
 
 
 @bot.on(admin_cmd(pattern="dyno (.*)"))
@@ -162,7 +160,7 @@ async def _(event):
             )
         )
     else:
-        await event.edit("Something went wrong. Please try again later.")
+        await edit_delete(event, "`Something went wrong. Please try again later.`", 5)
 
 
 @bot.on(admin_cmd(pattern="lmkp (.*)"))
@@ -184,7 +182,7 @@ async def _(event):
             )
         )
     else:
-        await event.edit("Something went wrong. Please try again later.")
+        await edit_delete(event, "`Something went wrong. Please try again later.`", 5)
 
 
 @bot.on(admin_cmd(pattern="gem (.*)"))
@@ -206,7 +204,7 @@ async def _(event):
             )
         )
     else:
-        await event.edit("Something went wrong. Please try again later.")
+        await edit_delete(event, "`Something went wrong. Please try again later.`", 5)
 
 
 @bot.on(admin_cmd(pattern="archive (.*)"))
@@ -228,4 +226,29 @@ async def _(event):
             )
         )
     else:
-        await event.edit("Something went wrong. Please try again later.")
+        await edit_delete(event, "`Something went wrong. Please try again later.`", 5)
+
+
+CMD_HELP.update(
+    {
+        "letmesearch": """**Plugin : **`letmesearch`
+
+**Syntax : **
+  •  `.lmg query`
+  •  `.lmy query`
+  •  `.ddg query`
+  •  `.lmalt query`
+  •  `.lmvar heroku app name`
+  •  `.lmlog heroku app name`
+  •  `.dyno heroku app name`
+  •  `.lmkp query`
+  •  `.gem query`
+  •  `.archive query`
+
+**Functions : **__searches the given query and shows you the link of that query . here are there sites \
+let me google(lmg),let me youtube(lmy),Duck buck go (ddg) , let me altnews(lmalt), \
+let me var(lmvar) var from heroku ,let me log(lmlog) logs link for heroku , heroku dyno link (dyno) \
+indian kanoon (lmkp) , Government e marketplace(gem) , web archive (archive)__\
+"""
+    }
+)

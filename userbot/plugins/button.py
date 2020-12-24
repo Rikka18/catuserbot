@@ -6,8 +6,7 @@ import re
 
 from telethon import Button
 
-from .. import CMD_HELP
-from ..utils import admin_cmd, edit_or_reply, sudo_cmd
+from . import BOT_USERNAME
 
 # regex obtained from:
 # https://github.com/PaulSonOfLars/tgbot/blob/master/tg_bot/modules/helper_funcs/string_handling.py#L23
@@ -17,6 +16,8 @@ BTN_URL_REGEX = re.compile(r"(\[([^\[]+?)\]\<buttonurl:(?:/{0,2})(.+?)(:same)?\>
 @bot.on(admin_cmd(pattern=r"cbutton(?: |$)(.*)", outgoing=True))
 @bot.on(sudo_cmd(pattern=r"cbutton(?: |$)(.*)", allow_sudo=True))
 async def _(event):
+    if event.fwd_from:
+        return
     chat = event.chat_id
     reply_message = await event.get_reply_message()
     if reply_message:
@@ -70,6 +71,8 @@ async def _(event):
 @bot.on(admin_cmd(pattern=r"ibutton( (.*)|$)", outgoing=True))
 @bot.on(sudo_cmd(pattern=r"ibutton( (.*)|$)", allow_sudo=True))
 async def _(event):
+    if event.fwd_from:
+        return
     reply_to_id = None
     catinput = "".join(event.text.split(maxsplit=1)[1:])
     if event.reply_to_msg_id:
@@ -82,7 +85,7 @@ async def _(event):
         await edit_or_reply(event, "`Give me something to write in bot inline`")
         return
     catinput = "Inline buttons " + catinput
-    tgbotusername = Var.TG_BOT_USER_NAME_BF_HER
+    tgbotusername = Config.TG_BOT_USER_NAME_BF_HER
     results = await bot.inline_query(tgbotusername, catinput)
     await results[0].click(event.chat_id, reply_to=reply_to_id, hide_via=True)
     await event.delete()
@@ -100,13 +103,14 @@ def build_keyboard(buttons):
 
 CMD_HELP.update(
     {
-        "button": "**Plugin : **`button`\
-    \n\n**SYNTAX : **`.cbutton`\
-    \n**USAGE :** Buttons must be in the format as [Name on button]<buttonurl:link you want to open> and markdown is Default to html\
-    \n**EXAMPLE :** `.cbutton test [google]<buttonurl:https://www.google.com> [catuserbot]<buttonurl:https://t.me/catuserbot17:same> [support]<buttonurl:https://t.me/catuserbot_support>`\
-    \n\n**SYNTAX : **`.ibutton`\
-    \n**USAGE :** Buttons must be in the format as [Name on button]<buttonurl:link you want to open>\
-    \n**EXAMPLE :** `.ibutton test [google]<buttonurl:https://www.google.com> [catuserbot]<buttonurl:https://t.me/catuserbot17:same> [support]<buttonurl:https://t.me/catuserbot_support>`\
+        "button": f"**Plugin : **`button`\
+    \n\n**Button post helper**\
+    \n  •  **Syntax : **`.cbutton`\
+    \n  •  **Usage :** __For working of this you need your bot({BOT_USERNAME}) in the group/channel you are using and Buttons must be in the format as [Name on button]<buttonurl:link you want to open> and markdown is Default to html__\
+    \n  •  **Example :** `.cbutton test [google]<buttonurl:https://www.google.com> [catuserbot]<buttonurl:https://t.me/catuserbot17:same> [support]<buttonurl:https://t.me/catuserbot_support>`\
+    \n\n  •  **Syntax : **`.ibutton`\
+    \n  •  **Function :** __Buttons must be in the format as [Name on button]<buttonurl:link you want to open>__\
+    \n  •  **Example :** `.ibutton test [google]<buttonurl:https://www.google.com> [catuserbot]<buttonurl:https://t.me/catuserbot17:same> [support]<buttonurl:https://t.me/catuserbot_support>`\
     "
     }
 )

@@ -5,9 +5,6 @@ import os
 
 import requests
 
-from ..utils import admin_cmd, sudo_cmd
-from . import CMD_HELP
-
 
 @bot.on(admin_cmd(pattern="detect$", outgoing=True))
 @bot.on(sudo_cmd(pattern="detect$", allow_sudo=True))
@@ -59,8 +56,8 @@ async def detect(event):
 
 CMD_HELP.update(
     {
-        "nsfw_detect": "**Plugin : **`nsfw_detect`\
-    \n\n**Syntax : **`.detect`\
-    \n**Function : **__Reply .detect command to any image or non animated sticker to detect the nudity in that__"
+        "nsfwdetect": "**Plugin : **`nsfwdetect`\
+    \n\n  •  **Syntax : **`.detect`\
+    \n  •  **Function : **__Reply .detect command to any image or non animated sticker to detect the nudity in that__"
     }
 )

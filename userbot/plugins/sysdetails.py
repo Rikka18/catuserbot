@@ -8,8 +8,7 @@ from datetime import datetime
 import psutil
 from telethon import __version__
 
-from ..utils import admin_cmd, edit_or_reply, sudo_cmd
-from . import ALIVE_NAME, CMD_HELP, runcmd
+from . import ALIVE_NAME, runcmd
 
 # ================= CONSTANT =================
 DEFAULTUSER = str(ALIVE_NAME) if ALIVE_NAME else "cat"
@@ -17,6 +16,7 @@ DEFAULTUSER = str(ALIVE_NAME) if ALIVE_NAME else "cat"
 
 
 @bot.on(admin_cmd(outgoing=True, pattern=r"spc$"))
+@bot.on(sudo_cmd(allow_sudo=True, pattern=r"spc$"))
 async def psu(event):
     uname = platform.uname()
     softw = "**System Information**\n"
@@ -75,6 +75,8 @@ def get_size(bytes, suffix="B"):
 @bot.on(admin_cmd(pattern="cpu$"))
 @bot.on(sudo_cmd(pattern="cpu$", allow_sudo=True))
 async def _(event):
+    if event.fwd_from:
+        return
     cmd = "cat /proc/cpuinfo | grep 'model name'"
     o = (await runcmd(cmd))[0]
     await edit_or_reply(

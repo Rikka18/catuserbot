@@ -9,9 +9,6 @@ import subprocess
 
 import requests
 
-from .. import CMD_HELP
-from ..utils import admin_cmd, edit_or_reply, sudo_cmd
-
 link_regex = re.compile(
     "((https?):((//)|(\\\\))+([\w\d:#@%/;$()~_?\+-=\\\.&](#!)?)*)", re.DOTALL
 )
@@ -29,7 +26,7 @@ async def labstack(event):
         filebase = input_str
     elif reply:
         filebase = await event.client.download_media(
-            reply.media, Var.TEMP_DOWNLOAD_DIRECTORY
+            reply.media, Config.TMP_DOWNLOAD_DIRECTORY
         )
     else:
         await editor.edit(
@@ -89,6 +86,8 @@ async def labstack(event):
     )
 )
 async def _(event):
+    if event.fwd_from:
+        return
     editor = await edit_or_reply(event, "processing ...")
     input_str = event.pattern_match.group(1)
     selected_transfer = event.pattern_match.group(2)

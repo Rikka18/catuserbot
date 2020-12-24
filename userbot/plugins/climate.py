@@ -7,7 +7,6 @@
 #
 import io
 import json
-import logging
 from datetime import datetime
 
 import aiohttp
@@ -16,17 +15,12 @@ from pytz import country_names as c_n
 from pytz import country_timezones as c_tz
 from pytz import timezone as tz
 
-from .. import CMD_HELP
-from .. import OPEN_WEATHER_MAP_APPID as OWM_API
-from ..utils import admin_cmd, edit_or_reply, errors_handler, sudo_cmd
-
-logging.basicConfig(
-    format="[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s", level=logging.WARNING
-)
+from ..utils import errors_handler
 
 # ===== CONSTANT =====
 DEFCITY = "Delhi"
 # ====================
+OWM_API = Config.OPEN_WEATHER_MAP_APPID
 
 
 async def get_tz(con):
@@ -52,7 +46,8 @@ async def get_weather(weather):
         )
         return
     APPID = OWM_API
-    if not weather.pattern_match.group(1):
+    input_str = "".join(weather.text.split(maxsplit=1)[1:])
+    if not input_str:
         CITY = DEFCITY
         if not CITY:
             await edit_or_reply(
@@ -60,7 +55,7 @@ async def get_weather(weather):
             )
             return
     else:
-        CITY = weather.pattern_match.group(1)
+        CITY = input_str
     timezone_countries = {
         timezone: country
         for country, timezones in c_tz.items()
@@ -79,10 +74,13 @@ async def get_weather(weather):
                 return
             CITY = newcity[0].strip() + "," + countrycode.strip()
     url = f"https://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={APPID}"
-    request = requests.get(url)
-    result = json.loads(request.text)
-    if request.status_code != 200:
-        await weather.edit(f"`Invalid country.`")
+    async with aiohttp.ClientSession() as _session:
+        async with _session.get(url) as request:
+            requeststatus = request.status
+            requesttext = await request.text()
+    result = json.loads(requesttext)
+    if requeststatus != 200:
+        await weather.edit(f"`Invalid city/country.`")
         return
     cityname = result["name"]
     curtemp = result["main"]["temp"]
@@ -192,6 +190,8 @@ async def set_default_city(city):
 @bot.on(admin_cmd(pattern="wttr ?(.*)"))
 @bot.on(sudo_cmd(pattern="wttr ?(.*)", allow_sudo=True))
 async def _(event):
+    if event.fwd_from:
+        return
     global DEFCITY
     reply_to_id = None
     if event.reply_to_msg_id:
@@ -216,11 +216,11 @@ async def _(event):
 CMD_HELP.update(
     {
         "climate": "**Plugin : **`climate`\
-        \n\n**Syntax : **`.climate <city>`\
-        \n**Function : **__Gets the weather of a city. By default it is Delhi, change it by setcity__\n\
-        \n\n**Syntax : **`.setcity <city> or .setcity <city>, <country name/code>`\
-        \n**Function : **__Sets your default city so you can just use .weather.__\
-        \n\n**Syntax : **`.wttr <city> `\
-        \n**Function : **__Shows you the climate data of 3 days from today in a image.__"
+        \n\n  •  **Syntax : **`.climate <city>`\
+        \n  •  **Function : **__Gets the weather of a city. By default it is Delhi, change it by setcity__\n\
+        \n\n  •  **Syntax : **`.setcity <city> or .setcity <city>, <country name/code>`\
+        \n  •  **Function : **__Sets your default city so you can just use .weather.__\
+        \n\n  •  **Syntax : **`.wttr <city> `\
+        \n  •  **Function : **__Shows you the climate data of 3 days from today in a image.__"
     }
 )

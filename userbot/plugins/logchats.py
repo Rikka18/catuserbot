@@ -5,8 +5,7 @@ from telethon import events
 
 import userbot.plugins.sql_helper.no_log_pms_sql as no_log_pms_sql
 
-from ..utils import admin_cmd
-from . import BOTLOG, BOTLOG_CHATID, CMD_HELP, LOGS, mentionuser
+from . import BOTLOG, BOTLOG_CHATID, LOGS, htmlmentionuser, mentionuser
 
 RECENT_USER = None
 NEWPM = None
@@ -66,12 +65,25 @@ async def log_tagged_messages(event):
             return
     except:
         pass
-    await asyncio.sleep(5)
+    full = None
+    try:
+        full = await event.client.get_entity(event.message.from_id)
+    except:
+        pass
+    messaget = media_type(event)
+    resalt = f"#TAGS \n<b>Group : </b><code>{hmm.title}</code>"
+    if full is not None:
+        resalt += f"\n<b>From : </b> 👤{htmlmentionuser(full.first_name , full.id)}"
+    if messaget is not None:
+        resalt += f"\n<b>Message type : </b><code>{messaget}</code>"
+    else:
+        resalt += f"\n<b>Message : </b>{event.message.message}"
+    resalt += f"\n<b>Message link: </b><a href = 'https://t.me/c/{hmm.id}/{event.message.id}'> link</a>"
+    await asyncio.sleep(3)
     if not event.is_private:
         await event.client.send_message(
             Config.PM_LOGGR_BOT_API_ID,
-            f"#TAGS \n<b>Group : </b><code>{hmm.title}</code>\
-                        \n<b>Message : </b><a href = 'https://t.me/c/{hmm.id}/{event.message.id}'> link</a>",
+            resalt,
             parse_mode="html",
             link_preview=False,
         )
@@ -121,13 +133,12 @@ async def set_no_log_p_m(event):
 
 CMD_HELP.update(
     {
-        "log_chats": "**Plugin : **`log_chats`\
-        \n\n**Syntax : **`.save` :\
-        \n**Function : ** saves tagged message in private group .\
-        \n\n**Syntax : **`.log`:\
-        \n**Function : **By default will log all private chat messages if you use .nolog and want to log again then you need to use this\
-        \n\n**Syntax : **`.nolog`:\
-        \n**Function : **stops logging from a private chat \
-        \n\n**Note : **Currently these resets after restart, will try to add database soon so wont reset after restart"
+        "logchats": "**Plugin : **`logchats`\
+        \n\n  •  **Syntax : **`.save` :\
+        \n  •  **Function : **__Saves tagged message in private group .__\
+        \n\n  •  **Syntax : **`.log`:\
+        \n  •  **Function : **__By default will log all private chat messages if you use .nolog and want to log again then you need to use this__\
+        \n\n  •  **Syntax : **`.nolog`:\
+        \n  •  **Function : **__Stops logging from a private chat or group where you used__"
     }
 )

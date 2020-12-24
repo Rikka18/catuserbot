@@ -7,8 +7,7 @@ Userbot plugin fot CatUserbot
 
 import asyncio
 
-from ..utils import admin_cmd, edit_or_reply, sudo_cmd
-from . import ALIVE_NAME, CMD_HELP
+from . import ALIVE_NAME
 
 DEFAULTUSER = str(ALIVE_NAME) if ALIVE_NAME else "cat"
 
@@ -16,6 +15,8 @@ DEFAULTUSER = str(ALIVE_NAME) if ALIVE_NAME else "cat"
 @bot.on(admin_cmd(pattern="imp(|n) (.*)", outgoing=True))
 @bot.on(sudo_cmd(pattern="imp(|n) (.*)", allow_sudo=True))
 async def _(event):
+    if event.fwd_from:
+        return
     hmm = bot.uid
     USERNAME = f"tg://user?id={hmm}"
     name = event.pattern_match.group(2)
@@ -101,6 +102,8 @@ async def _(event):
 @bot.on(admin_cmd(pattern="timp(|n) (.*)", outgoing=True))
 @bot.on(sudo_cmd(pattern="timp(|n) (.*)", allow_sudo=True))
 async def _(event):
+    if event.fwd_from:
+        return
     name = event.pattern_match.group(2)
     cmd = event.pattern_match.group(1).lower()
     catevent = await edit_or_reply(event, f"{name} is ejected.......")

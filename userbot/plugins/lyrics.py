@@ -5,15 +5,14 @@ import os
 import lyricsgenius
 from tswift import Song
 
-from ..utils import admin_cmd, edit_or_reply, sudo_cmd
-from . import CMD_HELP
-
 GENIUS = os.environ.get("GENIUS_API_TOKEN", None)
 
 
 @bot.on(admin_cmd(outgoing=True, pattern="lyrics ?(.*)"))
 @bot.on(sudo_cmd(allow_sudo=True, pattern="lyrics ?(.*)"))
 async def _(event):
+    if event.fwd_from:
+        return
     catevent = await edit_or_reply(event, "wi8..! I am searching your lyrics....`")
     reply_to_id = event.message.id
     if event.reply_to_msg_id:

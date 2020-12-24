@@ -5,9 +5,6 @@ from telethon.tl.types import ChatBannedRights
 
 import userbot.plugins.sql_helper.antiflood_sql as sql
 
-from .. import CMD_HELP
-from ..utils import admin_cmd, edit_or_reply, sudo_cmd
-
 CHAT_FLOOD = sql.__load_flood_settings()
 # warn mode for anti flood
 ANTI_FLOOD_WARN_MODE = ChatBannedRights(
@@ -59,6 +56,8 @@ because he reached the defined flood limit.""".format(
 @bot.on(admin_cmd(pattern="setflood(?: |$)(.*)"))
 @bot.on(sudo_cmd(pattern="setflood(?: |$)(.*)", allow_sudo=True))
 async def _(event):
+    if event.fwd_from:
+        return
     input_str = event.pattern_match.group(1)
     event = await edit_or_reply(event, "updating flood settings!")
     try:

@@ -2,8 +2,6 @@
 
 import asyncio
 
-from ..utils import admin_cmd, edit_or_reply, sudo_cmd
-
 
 @bot.on(admin_cmd(pattern=f"loading$", outgoing=True))
 @bot.on(sudo_cmd(pattern=f"loading$", allow_sudo=True))
@@ -239,3 +237,26 @@ async def _(event):
     for i in animation_ttl:
         await asyncio.sleep(animation_interval)
         await event.edit(animation_chars[i % 18])
+
+
+CMD_HELP.update(
+    {
+        "animation5": """**Plugin : **`animation5`
+        
+**Commands in animation5 are **
+  •  `.loading`
+  •  `.square`
+  •  `.up`
+  •  `.round`
+  •  `.hart`
+  •  `.anim`
+  •  `.fnl`
+  •  `.monkey`
+  •  `.herber`
+  •  `.hand`
+  •  `.gsg`
+  •  `.theart`
+  
+**Function : **__Different kinds of animation commands check yourself for their animation .__"""
+    }
+)

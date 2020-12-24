@@ -11,7 +11,6 @@ import requests
 from wikipedia import summary
 from wikipedia.exceptions import DisambiguationError, PageError
 
-from ..utils import admin_cmd, edit_or_reply, sudo_cmd
 from . import BOTLOG, BOTLOG_CHATID
 
 
@@ -142,3 +141,17 @@ async def imdb(e):
         )
     except IndexError:
         await catevent.edit("Plox enter **Valid movie name** kthx")
+
+
+CMD_HELP.update(
+    {
+        "scrapers": """**Plugin : **`scrapers`
+
+  •  **Syntax : ** `.wiki query`
+  •  **Function : **__Fetches given query in wikipedia and shows you__
+
+  •  **Syntax : ** `.imdb query`
+  •  **Function : **__Fetches Given movie details from imdb__
+"""
+    }
+)

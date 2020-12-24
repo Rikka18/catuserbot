@@ -1,12 +1,10 @@
 import os
-import time
 from datetime import datetime
 
 import requests
 from github import Github
 
-from ..utils import admin_cmd, edit_or_reply, sudo_cmd
-from . import CMD_HELP
+from . import reply_id
 
 GIT_TEMP_DIR = "./temp/"
 
@@ -16,6 +14,7 @@ GIT_TEMP_DIR = "./temp/"
 async def _(event):
     if event.fwd_from:
         return
+    reply_to_id = await reply_id(event)
     input_str = event.pattern_match.group(1)
     url = "https://api.github.com/users/{}".format(input_str)
     r = requests.get(url)
@@ -30,7 +29,7 @@ async def _(event):
         location = b["location"]
         bio = b["bio"]
         created_at = b["created_at"]
-        await bot.send_file(
+        await event.client.send_file(
             event.chat_id,
             caption="""**Name : **[{}]({})
 **Type :** {}
@@ -44,7 +43,7 @@ async def _(event):
             file=avatar_url,
             force_document=False,
             allow_cache=False,
-            reply_to=event,
+            reply_to=reply_to_id,
         )
         await event.delete()
     else:
@@ -56,30 +55,26 @@ async def _(event):
 async def download(event):
     if event.fwd_from:
         return
-    if Var.GITHUB_ACCESS_TOKEN is None:
-        await edit_or_reply(event, "`Please ADD Proper Access Token from github.com`")
+    if Config.GITHUB_ACCESS_TOKEN is None:
+        await edit_delete(event, "`Please ADD Proper Access Token from github.com`", 5)
         return
-    if Var.GIT_REPO_NAME is None:
-        await edit_or_reply(
-            event, "`Please ADD Proper Github Repo Name of your userbot`"
+    if Config.GIT_REPO_NAME is None:
+        await edit_delete(
+            event, "`Please ADD Proper Github Repo Name of your userbot`", 5
         )
         return
-    mone = edit_or_reply(event, "Processing ...")
+    mone = await edit_or_reply(event, "Processing ...")
     if not os.path.isdir(GIT_TEMP_DIR):
         os.makedirs(GIT_TEMP_DIR)
     start = datetime.now()
     reply_message = await event.get_reply_message()
     try:
-        time.time()
-        downloaded_file_name = await bot.download_media(
-            reply_message.media, GIT_TEMP_DIR
-        )
+        downloaded_file_name = await event.client.download_media(reply_message.media)
     except Exception as e:
         await mone.edit(str(e))
     else:
         end = datetime.now()
         ms = (end - start).seconds
-        await event.delete()
         await mone.edit(
             "Downloaded to `{}` in {} seconds.".format(downloaded_file_name, ms)
         )
@@ -89,11 +84,11 @@ async def download(event):
 
 async def git_commit(file_name, mone):
     content_list = []
-    access_token = Var.GITHUB_ACCESS_TOKEN
+    access_token = Config.GITHUB_ACCESS_TOKEN
     g = Github(access_token)
     file = open(file_name, "r", encoding="utf-8")
     commit_data = file.read()
-    repo = g.get_repo(Var.GIT_REPO_NAME)
+    repo = g.get_repo(Config.GIT_REPO_NAME)
     print(repo.name)
     create_file = True
     contents = repo.get_contents("")
@@ -106,14 +101,13 @@ async def git_commit(file_name, mone):
             return await mone.edit("`File Already Exists`")
     file_name = "userbot/plugins/" + file_name
     if create_file:
-        file_name = file_name.replace("./userbot/temp/", "")
         print(file_name)
         try:
             repo.create_file(
                 file_name, "Uploaded New Plugin", commit_data, branch="master"
             )
             print("Committed File")
-            ccess = Var.GIT_REPO_NAME
+            ccess = Config.GIT_REPO_NAME
             ccess = ccess.strip()
             await mone.edit(
                 f"`Commited On Your Github Repo`\n\n[Your PLUGINS](https://github.com/{ccess}/tree/master/userbot/plugins/)"
